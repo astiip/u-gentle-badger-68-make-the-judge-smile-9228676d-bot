@@ -32,6 +32,12 @@ function validate(text: string): void {
   if (text.includes('\n') || text.includes('\r')) {
     throw new Error('entry must be a single line');
   }
+  if (/[\u0000-\u001F\u007F]/.test(text)) {
+    throw new Error('entry contains a control character');
+  }
+  if (text !== text.trim()) {
+    throw new Error('entry has leading or trailing whitespace');
+  }
   // Round-trip through UTF-8: a lone surrogate or invalid sequence fails.
   if (Buffer.from(text, 'utf8').toString('utf8') !== text) {
     throw new Error('entry is not valid UTF-8 text');
